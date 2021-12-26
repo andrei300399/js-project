@@ -1,11 +1,84 @@
+li{
+    list-style: none;
+}
+
 .hidden{
     display: none;
 }
 .menu{
     display: flex;
+    justify-content: space-around;
 }
 .img-block{
     width: 100px;
     height: 100px;
     margin: 5px;
+}
+.selected{
+    border-color: darkgoldenrod;
+    border-width: 2px;
+    border-style: solid;
+}
+.theme__btn--red,.theme__btn--blue,.theme__btn--white {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    
+}
+
+
+body{
+    text-align: center;
+}
+
+.red button, .red input[type="button"]{
+    background-color: rgb(240, 119, 119);
+}
+.blue button, .blue input[type="button"]{
+    background-color: rgb(69, 124, 224);
+    color: chartreuse;
+}
+.white button, .white input[type="button"]{
+    background-color: rgb(184, 181, 181);
+    color: black;
+}
+
+.red {
+    background-color: rgb(238, 156, 156);
+    color: #000;
+
+}
+.blue {
+    background-color: rgb(115, 160, 243);
+    color: chartreuse;
+}
+.white {
+    background-color: rgb(255, 255, 255);
+    color: black;
+
+}
+button.theme__btn--blue{
+    background-color: rgb(115, 160, 243);
+    color: chartreuse;
+}
+button.theme__btn--white{
+    background-color: rgb(255, 255, 255);
+    color: black;
+}
+
+button.theme__btn--red {
+    background-color: rgb(238, 156, 156); 
+    color: #000;
+
+}
+
+.wrapper__menu{
+    width: 100%;
+    
+}
+
+input[type="button"]{
+    width: 180px;
+    height: 40px;
+    margin: 10px;
 }

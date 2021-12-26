@@ -9,7 +9,13 @@
     <title>Орфо</title>
 </head>
 
-<body>
+<body class="white">
+    <header>
+        <p>Выберете тему</p>
+        <button class="red theme__btn--red"></button>
+        <button class="blue theme__btn--blue"></button>
+        <button class="white theme__btn--white"></button>
+    </header>
     <div class="wrapper__auth">
         <div class="auth">
             <h1 class="auth__heading">Представьтесь</h1>
@@ -36,6 +42,7 @@
                 </li>
             </ul>
             <aside class="score">
+                <h3 class="score__heading">Таблица достижений</h3>
                 <ul class="score__list">
                     <li class="score__list-item">Man 1</li>
                 </ul>
@@ -79,7 +86,7 @@
     <div class="wrapper__game-over hidden">
         <h1 class="game-over__heading--fail hidden">Игра окончена</h1>
         <h1 class="game-over__heading--win hidden">Вы победили!</h1>
-        <button class="game-over__menu-btn">Меню</button>
+        <input type="button" class="game-over__menu-btn" value="Меню">
     </div>
 
     <script src="js/script.js"></script>

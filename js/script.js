@@ -29,6 +29,24 @@ let lvl1Images = document.querySelector('.level-1__images');
 const lvlSpecialWord = document.querySelector('.level-special__word');
 
 
+const btnThemeRed = document.querySelector('.theme__btn--red');
+const btnThemeBlue = document.querySelector('.theme__btn--blue');
+const btnThemeWhite = document.querySelector('.theme__btn--white');
+
+btnThemeRed.addEventListener('click', () => {
+    document.body.classList = "";
+    document.body.classList.toggle("red");
+});
+btnThemeBlue.addEventListener('click', () => {
+    document.body.classList = "";
+    document.body.classList.toggle("blue");
+});
+btnThemeWhite.addEventListener('click', () => {
+    document.body.classList = "";
+    document.body.classList.toggle("white");
+});
+
+
 let updateScore = function () {
     listScore.innerHTML = "";
     for (let i = 0; i < localStorage.length; i++) {
@@ -123,10 +141,13 @@ let funcKey = function (e) {
         localStorage.setItem(authName.value, Number(localStorage.getItem(authName.value)) + 10);
         lvlSpecialWord.innerHTML = tempArr.join('');
         drawScore(localStorage.getItem(authName.value));
+        formTask.innerHTML = `Введите пропущенную в слове букву (Осталось слов: ${N})`;
+        checkGameOver(LIVES);
     }
     else {
         LIVES--;
         formLives.innerHTML = `Жизней: ${LIVES}`;
+        checkGameOver(LIVES);
     }
 }
 
@@ -176,10 +197,12 @@ let createImages = function (count = 5) {
                 drawScore(localStorage.getItem(authName.value));
                 N--;
                 formTask.innerHTML = `Найти ${N} предметов, в которых ${arrLetter[0]}-я буква ${arrLetter[1]}`;
+                checkGameOver(LIVES);
             }
             else {
                 LIVES--;
                 formLives.innerHTML = `Жизней: ${LIVES}`;
+                checkGameOver(LIVES);
 
             }
 
@@ -210,7 +233,7 @@ let startLevel = function (level) {
         LIVES = 3;
         randomChoiceWord(arrWords);
         formHeading.innerHTML = "Уровень 3 (Специальный)";
-        formTask.innerHTML = "Введите пропущенную в слове букву";
+        formTask.innerHTML = `Введите пропущенную в слове букву (Осталось слов: ${N})`;
         formLives.innerHTML = `Жизней: ${LIVES}`;
         lvl1Images.classList.add('hidden');
         lvlSpecialWord.classList.remove('hidden');
@@ -245,14 +268,14 @@ let startLevel = function (level) {
 let checkGameOver = function (lives) {
 
     if (N == 0) {
-        wrapperLvl1.classList.toggle('hidden');
-        wrapperGameOver.classList.toggle('hidden');
+        wrapperLvl1.classList.add('hidden');
+        wrapperGameOver.classList.remove('hidden');
         headingGameWin.classList.remove('hidden');
         headingGameFail.classList.add('hidden');
         return true;
     } else if (START_TIME < 0 || lives <= 0) {
-        wrapperLvl1.classList.toggle('hidden');
-        wrapperGameOver.classList.toggle('hidden');
+        wrapperLvl1.classList.add('hidden');
+        wrapperGameOver.classList.remove('hidden');
         headingGameFail.classList.remove('hidden');
         headingGameWin.classList.add('hidden');
         return true;
