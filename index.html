@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href=style/style.css>
+    <title>Орфо</title>
+</head>
+
+<body>
+    <div class="wrapper__auth">
+        <div class="auth">
+            <h1 class="auth__heading">Представьтесь</h1>
+            <label for="">
+                Ваше имя:
+                <input type="text" placeholder="Имя" class='auth__name'>
+            </label>
+            <input type="button" class='auth__btn' value="Играть">
+        </div>
+    </div>
+
+    <div class="wrapper__menu hidden">
+        <div class="menu ">
+            <ul class="menu__list">
+                <li class="menu__list-item">
+                    <input type="button" class='menu__btn' value="Уровень 1">
+                </li>
+                <li class="menu__list-item">
+                    <input type="button" class='menu__btn' value="Уровень 2">
+                </li>
+                <li class="menu__list-item">
+                    <input type="button" class='menu__btn' value="Уровень 3 (Специальный)">
+
+                </li>
+            </ul>
+            <aside class="score">
+                <ul class="score__list">
+                    <li class="score__list-item">Man 1</li>
+                </ul>
+            </aside>
+        </div>
+    </div>
+    <div class="wrapper__level-1 hidden">
+        <div class="level-1">
+            <h1 class="level-1__heading">Уровень 1</h1>
+            <p class="level-1__text">
+                Найти N предметов, в которых К-я буква Х
+            </p>
+            <p class="level-1__score">Счет: 0 очков</p>
+            <p class="level-1__lives">Жизней: 3</p>
+            <p class="level-1__time">Время: 30</p>
+
+            <h2 class="level-special__word"></h2>
+            <div class="level-1__images">
+
+            </div>
+
+        </div>
+    </div>
+    <!-- <div class="wrapper__level-2 hidden">
+        <div class="level-2">
+            <h1 class="level-2__heading">Уровень 2</h1>
+            <p class="level-2__text">
+                Найти N предметов, в которых К-я буква Х
+            </p>
+        </div>
+    </div> -->
+    <!-- <div class="wrapper__level-special hidden">
+        <div class="level-special">
+            <h1 class="level-special__heading">Уровень 3 (Специальный)</h1>
+            <p class="level-special__text">
+                Введите пропущенную в слове букву
+            </p>
+            <h2 class="level-special__word"></h2>
+        </div>
+    </div> -->
+    <div class="wrapper__game-over hidden">
+        <h1 class="game-over__heading--fail hidden">Игра окончена</h1>
+        <h1 class="game-over__heading--win hidden">Вы победили!</h1>
+        <button class="game-over__menu-btn">Меню</button>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+
+</html>

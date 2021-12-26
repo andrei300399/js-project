@@ -1,0 +1,11 @@
+.hidden{
+    display: none;
+}
+.menu{
+    display: flex;
+}
+.img-block{
+    width: 100px;
+    height: 100px;
+    margin: 5px;
+}
