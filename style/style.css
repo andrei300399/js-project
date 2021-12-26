@@ -82,3 +82,15 @@ input[type="button"]{
     height: 40px;
     margin: 10px;
 }
+
+.move img {
+
+    position: relative;
+    animation: mymove 2s infinite;
+  }
+
+  @keyframes mymove {
+    0% {top: 0px;}
+    50% {top: 300px;}
+    100% {top: 0px;}
+  }

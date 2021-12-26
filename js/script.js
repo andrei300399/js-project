@@ -243,6 +243,7 @@ let startLevel = function (level) {
         lvlSpecialWord.classList.add('hidden');
 
         if (level == 1) {
+            lvl1Images.classList.remove('move');
             formHeading.innerHTML = "Уровень 1";
             START_TIME = 30;
             LIVES = 3;
@@ -250,6 +251,8 @@ let startLevel = function (level) {
             formHeading.innerHTML = "Уровень 2";
             START_TIME = 15;
             LIVES = 2;
+            lvl1Images.classList.add('move');
+            console.log(lvl1Images.classList);
         }
 
 
@@ -260,6 +263,7 @@ let startLevel = function (level) {
     drawScore(localStorage.getItem(authName.value));
     setTimeout(loop, 1500);
     console.log(11111);
+    //lvl1Images.classList.remove('move');
     //loop();
 
 
