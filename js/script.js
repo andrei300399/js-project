@@ -24,6 +24,7 @@ const formHeading = document.querySelector('.level-1__heading');
 
 
 const listScore = document.querySelector('.score__list');
+const clearScore = document.querySelector('.score__clear');
 
 let lvl1Images = document.querySelector('.level-1__images');
 const lvlSpecialWord = document.querySelector('.level-special__word');
@@ -33,17 +34,48 @@ const btnThemeRed = document.querySelector('.theme__btn--red');
 const btnThemeBlue = document.querySelector('.theme__btn--blue');
 const btnThemeWhite = document.querySelector('.theme__btn--white');
 
+const textAttemptFail = document.querySelector('.text__attempt--fail');
+const textAttemptRight = document.querySelector('.text__attempt--right');
+
+
+const hider = document.querySelector('.pre-start');
+const lastChoice = document.querySelector('.last__choice');
+
+const listLetters = document.querySelector('.letters__list');
+const pointLetter = document.querySelector('.point');
+const wrapperDrag = document.querySelector('.level-drag');
+
+
+clearScore.addEventListener('click', () => {
+    localStorage.clear();
+    updateScore();
+
+});
+
+
 btnThemeRed.addEventListener('click', () => {
+    btnThemeWhite.classList.remove("selected");
+    btnThemeBlue.classList.remove("selected");
+    btnThemeRed.classList.add("selected");
     document.body.classList = "";
     document.body.classList.toggle("red");
+
 });
 btnThemeBlue.addEventListener('click', () => {
+    btnThemeWhite.classList.remove("selected");
+    btnThemeBlue.classList.add("selected");
+    btnThemeRed.classList.remove("selected");
     document.body.classList = "";
     document.body.classList.toggle("blue");
+
 });
 btnThemeWhite.addEventListener('click', () => {
+    btnThemeWhite.classList.add("selected");
+    btnThemeBlue.classList.remove("selected");
+    btnThemeRed.classList.remove("selected");
     document.body.classList = "";
     document.body.classList.toggle("white");
+
 });
 
 
@@ -67,7 +99,7 @@ let N = 4;
 
 
 
-const arrImages = ["bike", "bus", "cat", "dog", "rainbow", "stoun", "sun"];
+const arrImages = ["bike", "bus", "cat", "dog", "rainbow", "snake", "sun", "grape", "tree", "rose", "notebook", "star"];
 
 const dictImages = {
     "bike": "велосипед",
@@ -75,11 +107,18 @@ const dictImages = {
     "cat": "кошка",
     "dog": "собака",
     "rainbow": "радуга",
-    "stoun": "камень",
-    "sun": "солнце"
+    "snake": "змея",
+    "sun": "солнце",
+    "grape": "виноград",
+    "tree": "елка",
+    "rose": "роза",
+    "notebook": "ноутбук",
+    "star": "звезда"
 };
 
 const arrWords = ["радуга", "собака", "кошка", "орфография", "иллюстрация", "огниво", "облако", "снегурочка"];
+const stringLetters = "абвгдежзийклмнопрстуфхцч";
+
 
 let randomItem;
 let randomLetterIndex;
@@ -109,6 +148,15 @@ let isCorrect = function (name, k, letter) {
 
 
 };
+
+let setAnimationMove = function () {
+    const imgBlocks = document.querySelectorAll('.img-block');
+    for (let index = 0; index < imgBlocks.length; index++) {
+        imgBlocks[index].classList.add("move" + (Math.floor(Math.random() * 4) + 1));
+
+    }
+
+}
 
 let randomChoice = function (array, count) {
     const randomItem = array[Math.floor(Math.random() * count)];
@@ -143,11 +191,13 @@ let funcKey = function (e) {
         drawScore(localStorage.getItem(authName.value));
         formTask.innerHTML = `Введите пропущенную в слове букву (Осталось слов: ${N})`;
         checkGameOver(LIVES);
+        animationAttempt(textAttemptRight, N, "right");
     }
     else {
         LIVES--;
         formLives.innerHTML = `Жизней: ${LIVES}`;
         checkGameOver(LIVES);
+        animationAttempt(textAttemptFail, LIVES, "fail");
     }
 }
 
@@ -165,6 +215,110 @@ let randomChoiceWord = function (array) {
 
 };
 
+let randomLetter = function (str) {
+
+    listLetters.innerHTML = "";
+    tempArr = stringLetters.split('');
+    tempArr = shuffle(tempArr).slice(0, 5);
+    randomLetterIndex = Math.floor(Math.random() * tempArr.length);
+    //pointLetter.innerHTML = tempArr[randomLetterIndex];
+    formTask.innerHTML = `Перетащите в квадрат букву ${tempArr[randomLetterIndex]}  (Осталось букв: ${N})`;
+
+    const boxAnswer = document.querySelector('.answer');
+    console.log(boxAnswer.getBoundingClientRect());
+    for (let index = 0; index < tempArr.length; index++) {
+        let letterLi = document.createElement('li');
+        letterLi.innerHTML = tempArr[index];
+        letterLi.setAttribute("class", 'list__letter');
+        letterLi.onmousedown = function (event) { // (1) отследить нажатие
+
+            // (2) подготовить к перемещению:
+            // разместить поверх остального содержимого и в абсолютных координатах
+            letterLi.style.position = 'absolute';
+            letterLi.style.zIndex = 1000;
+
+
+            moveAt(event.pageX, event.pageY);
+
+            // передвинуть букву под координаты курсора
+            // и сдвинуть на половину ширины/высоты для центрирования
+            function moveAt(pageX, pageY) {
+                letterLi.style.left = pageX - letterLi.offsetWidth / 2 + 'px';
+                letterLi.style.top = pageY - letterLi.offsetHeight / 2 + 'px';
+
+                console.log(boxAnswer.getBoundingClientRect().top);
+                console.log(letterLi.getBoundingClientRect().top);
+
+            }
+
+            function onMouseMove(event) {
+                moveAt(event.pageX, event.pageY);
+            }
+
+            // (3) перемещать по экрану
+            document.addEventListener('mousemove', onMouseMove);
+
+            // (4) положить букву, удалить более ненужные обработчики событий
+            letterLi.onmouseup = function () {
+                document.removeEventListener('mousemove', onMouseMove);
+                letterLi.onmouseup = null;
+
+                let coordBox = boxAnswer.getBoundingClientRect();
+                let coordLetter = letterLi.getBoundingClientRect();
+                if (coordBox.top < coordLetter.top &&
+                    coordBox.bottom > coordLetter.bottom &&
+                    coordBox.left < coordLetter.left &&
+                    coordBox.right > coordLetter.right
+                ) {
+
+                    if (tempArr[randomLetterIndex] == letterLi.innerText) {
+                        N--;
+                        formTask.innerHTML = `Введите пропущенную в слове букву (Осталось слов: ${N})`;
+                        animationAttempt(textAttemptRight, N, "right");
+                        localStorage.setItem(authName.value, Number(localStorage.getItem(authName.value)) + 10);
+
+                    } else {
+
+
+                        LIVES--;
+                        formLives.innerHTML = `Жизней: ${LIVES}`;
+                        animationAttempt(textAttemptFail, LIVES, "fail");
+                    }
+                    checkGameOver(LIVES);
+
+                    letterLi.remove();
+                    tempArr.splice(tempArr.indexOf(letterLi.innerText), 1);
+                    randomLetterIndex = Math.floor(Math.random() * tempArr.length);
+                    //pointLetter.innerHTML = tempArr[randomLetterIndex];
+                    formTask.innerHTML = `Перетащите в квадрат букву ${tempArr[randomLetterIndex]}  (Осталось букв: ${N})`;
+
+
+
+
+                }
+
+            };
+
+        };
+        listLetters.append(letterLi);
+
+    }
+
+
+
+}
+
+let animationAttempt = function (textForm, parameter, className) {
+
+    if (parameter > 0) {
+        textForm.classList.add(className);
+        setTimeout(() => {
+            textForm.classList.remove(className);
+        }, 700);
+    }
+
+}
+
 
 
 
@@ -179,7 +333,6 @@ let createImages = function (count = 5) {
     const arrLetter = randomChoice(currentArrImages, count);
     console.log(arrLetter);
     formTask.innerHTML = `Найти ${N} предметов, в которых ${arrLetter[0]}-я буква ${arrLetter[1]}`;
-    //let LIVES = 3;
     formLives.innerHTML = `Жизней: ${LIVES}`;
 
 
@@ -198,13 +351,19 @@ let createImages = function (count = 5) {
                 N--;
                 formTask.innerHTML = `Найти ${N} предметов, в которых ${arrLetter[0]}-я буква ${arrLetter[1]}`;
                 checkGameOver(LIVES);
+                animationAttempt(textAttemptRight, N, "right");
+
             }
             else {
+
                 LIVES--;
                 formLives.innerHTML = `Жизней: ${LIVES}`;
                 checkGameOver(LIVES);
 
+                animationAttempt(textAttemptFail, LIVES, "fail");
+
             }
+            lastChoice.innerHTML = "Последнее выбранное слово:" + img.name;
 
 
         });
@@ -227,23 +386,36 @@ let drawScore = function (score) {
 let startLevel = function (level) {
 
     document.onkeydown = null;
+    lastChoice.innerHTML = "";
     N = 3;
-    if (level == 3) {
+    if (level == 4) {
+        START_TIME = 15;
+        LIVES = 3;
+        randomLetter(stringLetters);
+        formHeading.innerHTML = "Уровень 4";
+        formLives.innerHTML = `Жизней: ${LIVES}`;
+        lvl1Images.classList.add('hidden');
+        lvlSpecialWord.classList.add('hidden');
+        wrapperDrag.classList.remove('hidden');
+    }
+    else if (level == 3) {
         START_TIME = 15;
         LIVES = 3;
         randomChoiceWord(arrWords);
-        formHeading.innerHTML = "Уровень 3 (Специальный)";
+        formHeading.innerHTML = "Уровень 3 ";
         formTask.innerHTML = `Введите пропущенную в слове букву (Осталось слов: ${N})`;
         formLives.innerHTML = `Жизней: ${LIVES}`;
         lvl1Images.classList.add('hidden');
         lvlSpecialWord.classList.remove('hidden');
+        wrapperDrag.classList.add('hidden');
 
     } else {
         lvl1Images.classList.remove('hidden');
         lvlSpecialWord.classList.add('hidden');
+        wrapperDrag.classList.add('hidden');
 
         if (level == 1) {
-            lvl1Images.classList.remove('move');
+
             formHeading.innerHTML = "Уровень 1";
             START_TIME = 30;
             LIVES = 3;
@@ -251,20 +423,24 @@ let startLevel = function (level) {
             formHeading.innerHTML = "Уровень 2";
             START_TIME = 15;
             LIVES = 2;
-            lvl1Images.classList.add('move');
+
             console.log(lvl1Images.classList);
         }
 
 
 
         createImages();
+        if (level == 2) {
+            setAnimationMove();
+        }
     }
     formTime.innerHTML = `Время: ${START_TIME}`;
     drawScore(localStorage.getItem(authName.value));
-    setTimeout(loop, 1500);
-    console.log(11111);
-    //lvl1Images.classList.remove('move');
-    //loop();
+    hider.classList.add("hider");
+    setTimeout(() => {
+        hider.classList.remove("hider");
+        loop();
+    }, 1500);
 
 
 };
@@ -282,6 +458,7 @@ let checkGameOver = function (lives) {
         wrapperGameOver.classList.remove('hidden');
         headingGameFail.classList.remove('hidden');
         headingGameWin.classList.add('hidden');
+        localStorage.setItem(authName.value, Number(localStorage.getItem(authName.value)) - 100);
         return true;
     }
     return false;
@@ -333,10 +510,15 @@ for (let index = 0; index < menuListItemBtns.length; index++) {
 
 
                 break;
-            case 'Уровень 3 (Специальный)':
+            case 'Уровень 3':
                 wrapperLvl1.classList.toggle('hidden');
                 wrapperMenu.classList.toggle('hidden');
                 startLevel(3);
+                break;
+            case 'Уровень 4':
+                wrapperLvl1.classList.toggle('hidden');
+                wrapperMenu.classList.toggle('hidden');
+                startLevel(4);
                 break;
             default:
                 break;
