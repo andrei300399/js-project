@@ -185,11 +185,15 @@ let funcKey = function (e) {
         randomItem = arrWords[Math.floor(Math.random() * arrWords.length)];
         randomLetterIndex = Math.floor(Math.random() * randomItem.length);
         tempArr = randomItem.split('');
-        tempArr[randomLetterIndex] = '#';
+        let letterRed = document.createElement('span');
+        letterRed.innerHTML = '#';
+        letterRed.setAttribute("class", 'red-letter');
+        //tempArr[randomLetterIndex] = '#';
+        lvlSpecialWord.innerHTML = tempArr.slice(0, randomLetterIndex).join('') + letterRed.outerHTML + tempArr.slice(randomLetterIndex + 1).join('');
         localStorage.setItem(authName.value, Number(localStorage.getItem(authName.value)) + 10);
-        lvlSpecialWord.innerHTML = tempArr.join('');
+        // lvlSpecialWord.innerHTML = tempArr.join('');
         drawScore(localStorage.getItem(authName.value));
-        formTask.innerHTML = `Введите пропущенную в слове букву (Осталось слов: ${N})`;
+        formTask.innerHTML = `Введите пропущенную в слове букву, нажав на нужную клавишу (Осталось слов: ${N})`;
         checkGameOver(LIVES);
         animationAttempt(textAttemptRight, N, "right");
     }
@@ -207,9 +211,12 @@ let randomChoiceWord = function (array) {
     randomItem = array[Math.floor(Math.random() * arrWords.length)];
     randomLetterIndex = Math.floor(Math.random() * randomItem.length);
     tempArr = randomItem.split('');
-    tempArr[randomLetterIndex] = '#';
-    lvlSpecialWord.innerHTML = tempArr.join('');
-    console.log(randomLetterIndex, randomItem);
+    let letterRed = document.createElement('span');
+    letterRed.innerHTML = '#';
+    letterRed.setAttribute("class", 'red-letter');
+    //tempArr[randomLetterIndex] = '#';
+    lvlSpecialWord.innerHTML = tempArr.slice(0, randomLetterIndex).join('') + letterRed.outerHTML + tempArr.slice(randomLetterIndex + 1).join('');
+    //console.log(letterRed.outerHTML);
     document.addEventListener('keydown', funcKey, true);
 
 
@@ -225,7 +232,7 @@ let randomLetter = function (str) {
     formTask.innerHTML = `Перетащите в квадрат букву ${tempArr[randomLetterIndex]}  (Осталось букв: ${N})`;
 
     const boxAnswer = document.querySelector('.answer');
-    console.log(boxAnswer.getBoundingClientRect());
+
     for (let index = 0; index < tempArr.length; index++) {
         let letterLi = document.createElement('li');
         letterLi.innerHTML = tempArr[index];
@@ -276,6 +283,7 @@ let randomLetter = function (str) {
                         formTask.innerHTML = `Введите пропущенную в слове букву (Осталось слов: ${N})`;
                         animationAttempt(textAttemptRight, N, "right");
                         localStorage.setItem(authName.value, Number(localStorage.getItem(authName.value)) + 10);
+                        drawScore(localStorage.getItem(authName.value));
 
                     } else {
 
@@ -403,7 +411,7 @@ let startLevel = function (level) {
         LIVES = 3;
         randomChoiceWord(arrWords);
         formHeading.innerHTML = "Уровень 3 ";
-        formTask.innerHTML = `Введите пропущенную в слове букву (Осталось слов: ${N})`;
+        formTask.innerHTML = `Введите пропущенную в слове букву, нажав на нужную клавишу (Осталось слов: ${N})`;
         formLives.innerHTML = `Жизней: ${LIVES}`;
         lvl1Images.classList.add('hidden');
         lvlSpecialWord.classList.remove('hidden');
@@ -435,7 +443,7 @@ let startLevel = function (level) {
         }
     }
     formTime.innerHTML = `Время: ${START_TIME}`;
-    drawScore(localStorage.getItem(authName.value));
+    drawScore(Number(localStorage.getItem(authName.value)));
     hider.classList.add("hider");
     setTimeout(() => {
         hider.classList.remove("hider");
