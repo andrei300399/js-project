@@ -21,6 +21,11 @@ header{
 header button{
     margin: 5px;
 }
+.hide-animation{
+    border:1px green solid;
+    opacity: 0;
+    transition: opacity 1s;
+}
 .hidden{
     display: none;
 }

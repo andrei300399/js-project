@@ -45,6 +45,9 @@ const listLetters = document.querySelector('.letters__list');
 const pointLetter = document.querySelector('.point');
 const wrapperDrag = document.querySelector('.level-drag');
 
+const result = document.querySelector('.game-over__result');
+
+let currentScore = 0;
 
 clearScore.addEventListener('click', () => {
     localStorage.clear();
@@ -80,15 +83,30 @@ btnThemeWhite.addEventListener('click', () => {
 
 
 let updateScore = function () {
+    // Create items array
+
+    console.log(localStorage);
+    var items = Object.keys(localStorage).map(function (key) {
+        return [key, localStorage.getItem(key)];
+    });
+
+    // Sort the array based on the second element
+    items.sort(function (first, second) {
+        return second[1] - first[1];
+    });
+    console.log(items);
+    // Create a new array with only the first 5 items
+    console.log(items.slice(0, 5));
+
     listScore.innerHTML = "";
-    for (let i = 0; i < localStorage.length; i++) {
-        let key = localStorage.key(i);
+    for (let i = 0; i < 5; i++) {
+        // let key = localStorage.key(i);
         let listScoreItem = document.createElement('li');
-        listScoreItem.innerHTML = `Игрок ${key} набрал ${localStorage.getItem(key)}`;
+        listScoreItem.innerHTML = `Игрок ${items[i][0]} набрал ${items[i][1]}`;
         listScore.append(listScoreItem);
     }
 
-}
+};
 
 
 
@@ -99,7 +117,9 @@ let N = 4;
 
 
 
-const arrImages = ["bike", "bus", "cat", "dog", "rainbow", "snake", "sun", "grape", "tree", "rose", "notebook", "star"];
+const arrImages = ["bike", "bus", "cat", "dog", "rainbow",
+    "snake", "sun", "grape", "tree", "rose", "notebook", "star",
+    "apple", "ball", "roket", "cup", "banana", "cow", "melon", "snow"];
 
 const dictImages = {
     "bike": "велосипед",
@@ -113,11 +133,23 @@ const dictImages = {
     "tree": "елка",
     "rose": "роза",
     "notebook": "ноутбук",
-    "star": "звезда"
+    "star": "звезда",
+    "apple": "яблоко",
+    "ball": "мяч",
+    "roket": "ракетка",
+    "cup": "чашка",
+    "banana": "банан",
+    "cow": "корова",
+    "melon": "арбуз",
+    "snow": "снеговик"
+
+
 };
 
 const arrWords = ["радуга", "собака", "кошка", "орфография", "иллюстрация", "огниво", "облако", "снегурочка"];
 const stringLetters = "абвгдежзийклмнопрстуфхцч";
+
+
 
 
 let randomItem;
@@ -179,30 +211,47 @@ let randomChoice = function (array, count) {
 
 let funcKey = function (e) {
     console.log(e);
+    document.removeEventListener('keydown', funcKey, true);
     if (randomItem[randomLetterIndex] == e.key) {
         console.log(2222);
         N--;
-        randomItem = arrWords[Math.floor(Math.random() * arrWords.length)];
-        randomLetterIndex = Math.floor(Math.random() * randomItem.length);
-        tempArr = randomItem.split('');
-        let letterRed = document.createElement('span');
-        letterRed.innerHTML = '#';
-        letterRed.setAttribute("class", 'red-letter');
-        //tempArr[randomLetterIndex] = '#';
-        lvlSpecialWord.innerHTML = tempArr.slice(0, randomLetterIndex).join('') + letterRed.outerHTML + tempArr.slice(randomLetterIndex + 1).join('');
-        localStorage.setItem(authName.value, Number(localStorage.getItem(authName.value)) + 10);
-        // lvlSpecialWord.innerHTML = tempArr.join('');
-        drawScore(localStorage.getItem(authName.value));
         formTask.innerHTML = `Введите пропущенную в слове букву, нажав на нужную клавишу (Осталось слов: ${N})`;
-        checkGameOver(LIVES);
+        drawScore(currentScore);
+        let letterRed = document.querySelector('.red-letter');
+        letterRed.innerHTML = e.key;
+        letterRed.style.color = "green";
+        setTimeout(() => {
+            randomItem = arrWords[Math.floor(Math.random() * arrWords.length)];
+            randomLetterIndex = Math.floor(Math.random() * randomItem.length);
+            tempArr = randomItem.split('');
+            letterRed = document.createElement('span');
+            letterRed.innerHTML = "#";
+
+            letterRed.setAttribute("class", 'red-letter');
+            //tempArr[randomLetterIndex] = '#';
+            lvlSpecialWord.innerHTML = tempArr.slice(0, randomLetterIndex).join('') + letterRed.outerHTML + tempArr.slice(randomLetterIndex + 1).join('');
+            currentScore += 10;
+            // lvlSpecialWord.innerHTML = tempArr.join('');
+
+            document.addEventListener('keydown', funcKey, true);
+            checkGameOver(LIVES);
+
+
+        }, 1000);
+
         animationAttempt(textAttemptRight, N, "right");
     }
     else {
         LIVES--;
+        const letterRed = document.querySelector('.red-letter');
+        letterRed.innerHTML = e.key;
         formLives.innerHTML = `Жизней: ${LIVES}`;
+        document.addEventListener('keydown', funcKey, true);
         checkGameOver(LIVES);
         animationAttempt(textAttemptFail, LIVES, "fail");
+
     }
+
 }
 
 
@@ -282,8 +331,8 @@ let randomLetter = function (str) {
                         N--;
                         formTask.innerHTML = `Введите пропущенную в слове букву (Осталось слов: ${N})`;
                         animationAttempt(textAttemptRight, N, "right");
-                        localStorage.setItem(authName.value, Number(localStorage.getItem(authName.value)) + 10);
-                        drawScore(localStorage.getItem(authName.value));
+                        currentScore += 10;
+                        drawScore(currentScore);
 
                     } else {
 
@@ -318,14 +367,14 @@ let randomLetter = function (str) {
 
 let animationAttempt = function (textForm, parameter, className) {
 
-    if (parameter > 0) {
-        textForm.classList.add(className);
-        setTimeout(() => {
-            textForm.classList.remove(className);
-        }, 700);
-    }
 
-}
+    textForm.classList.add(className);
+    setTimeout(() => {
+        textForm.classList.remove(className);
+    }, 700);
+
+
+};
 
 
 
@@ -352,14 +401,17 @@ let createImages = function (count = 5) {
         img.addEventListener('click', () => {
             console.log(img.name);
             if (isCorrect(img.name, arrLetter[0], arrLetter[1])) {
-                localStorage.setItem(authName.value, Number(localStorage.getItem(authName.value)) + 10);
-                img.classList.toggle("hidden");
-                console.log(localStorage.getItem(authName.value));
-                drawScore(localStorage.getItem(authName.value));
+                currentScore += 10;
+
+                img.classList.toggle("hide-animation");
+                //img.classList.toggle("hidden");
+                //console.log(localStorage.getItem(authName.value));
+                drawScore(currentScore);
                 N--;
                 formTask.innerHTML = `Найти ${N} предметов, в которых ${arrLetter[0]}-я буква ${arrLetter[1]}`;
                 checkGameOver(LIVES);
                 animationAttempt(textAttemptRight, N, "right");
+                img.addEventListener("click", handler, true);
 
             }
             else {
@@ -395,7 +447,7 @@ let startLevel = function (level) {
 
     document.onkeydown = null;
     lastChoice.innerHTML = "";
-    N = 3;
+
     if (level == 4) {
         START_TIME = 15;
         LIVES = 3;
@@ -443,7 +495,7 @@ let startLevel = function (level) {
         }
     }
     formTime.innerHTML = `Время: ${START_TIME}`;
-    drawScore(Number(localStorage.getItem(authName.value)));
+    drawScore(currentScore);
     hider.classList.add("hider");
     setTimeout(() => {
         hider.classList.remove("hider");
@@ -453,21 +505,62 @@ let startLevel = function (level) {
 
 };
 
-let checkGameOver = function (lives) {
+function handler(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    e.stopImmediatePropagation();
+}
 
-    if (N == 0) {
-        wrapperLvl1.classList.add('hidden');
-        wrapperGameOver.classList.remove('hidden');
-        headingGameWin.classList.remove('hidden');
-        headingGameFail.classList.add('hidden');
-        return true;
-    } else if (START_TIME < 0 || lives <= 0) {
-        wrapperLvl1.classList.add('hidden');
-        wrapperGameOver.classList.remove('hidden');
-        headingGameFail.classList.remove('hidden');
-        headingGameWin.classList.add('hidden');
-        localStorage.setItem(authName.value, Number(localStorage.getItem(authName.value)) - 100);
-        return true;
+let checkGameOver = function (lives) {
+    if (wrapperGameOver.classList.contains('hidden') && wrapperMenu.classList.contains('hidden')) {
+
+
+        // if (wrapperMenu.) {
+
+        // }
+        if (N == 0) {
+            document.addEventListener("click", handler, true);
+            document.addEventListener("mousedown", handler, true);
+            document.removeEventListener('keydown', funcKey, true);
+            console.log("gameover");
+
+            setTimeout(() => {
+
+                result.classList.remove('hidden');
+                localStorage.setItem(authName.value, Number(localStorage.getItem(authName.value)) + currentScore);
+                result.innerHTML = `В этой игре вы набрали ${currentScore} очков. Всего очков ${localStorage.getItem(authName.value)}`;
+                wrapperLvl1.classList.add('hidden');
+                wrapperGameOver.classList.remove('hidden');
+                headingGameWin.classList.remove('hidden');
+                headingGameFail.classList.add('hidden');
+                document.removeEventListener("click", handler, true);
+                document.removeEventListener("mousedown", handler, true);
+            }, 1500);
+            return true;
+        } else if (START_TIME < 0 || lives <= 0) {
+            document.addEventListener("click", handler, true);
+            document.addEventListener("mousedown", handler, true);
+            document.removeEventListener('keydown', funcKey, true);
+
+            setTimeout(() => {
+                result.classList.remove('hidden');
+                localStorage.setItem(authName.value, Number(localStorage.getItem(authName.value)) - 100);
+                result.innerHTML = `В этой игре вы набрали ${currentScore} очков. Всего очков ${localStorage.getItem(authName.value)}`;
+                wrapperLvl1.classList.add('hidden');
+                wrapperGameOver.classList.remove('hidden');
+                headingGameFail.classList.remove('hidden');
+                headingGameWin.classList.add('hidden');
+                //localStorage.setItem(authName.value, Number(localStorage.getItem(authName.value)) - 100);
+                document.removeEventListener("click", handler, true);
+                document.removeEventListener("mousedown", handler, true);
+                // N = 3;
+
+            }, 1500);
+
+            return true;
+        } else {
+
+        }
     }
     return false;
 };
@@ -477,7 +570,10 @@ let loop = function () {
     formTime.innerHTML = `Время: ${START_TIME}`;
     START_TIME--;
     console.log(START_TIME);
-    if (checkGameOver(LIVES)) {
+    if (START_TIME < 0) {
+        checkGameOver(LIVES);
+        return;
+    } else if (LIVES <= 0 || N == 0) {
         return;
     }
     setTimeout(loop, 1000);
@@ -495,16 +591,24 @@ btnLogin.addEventListener('click', () => {
 });
 
 btnGameOver.addEventListener('click', () => {
+
+    N = 3;
     wrapperGameOver.classList.toggle('hidden');
     updateScore();
     wrapperMenu.classList.toggle('hidden');
+
+
+
 });
 
 for (let index = 0; index < menuListItemBtns.length; index++) {
 
     menuListItemBtns[index].addEventListener('click', () => {
+        N = 3;
+        currentScore = 0;
         switch (menuListItemBtns[index].value) {
             case 'Уровень 1':
+
                 wrapperLvl1.classList.toggle('hidden');
                 wrapperMenu.classList.toggle('hidden');
                 startLevel(1);
