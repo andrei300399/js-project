@@ -96,10 +96,11 @@ let updateScore = function () {
     });
     console.log(items);
     // Create a new array with only the first 5 items
-    console.log(items.slice(0, 5));
+    // console.log(items.slice(0, 5));
 
     listScore.innerHTML = "";
-    for (let i = 0; i < 5; i++) {
+    let lim = (5 > localStorage.length) ? localStorage.length : 5;
+    for (let i = 0; i < lim; i++) {
         // let key = localStorage.key(i);
         let listScoreItem = document.createElement('li');
         listScoreItem.innerHTML = `Игрок ${items[i][0]} набрал ${items[i][1]}`;
